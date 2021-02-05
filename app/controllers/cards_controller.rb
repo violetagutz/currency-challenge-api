@@ -4,7 +4,7 @@ class CardsController < ApplicationController
     if card.save
       render json: { id: card.id, limit: card.limit, error: false }, status: 201
     else
-      render json: { error: true }, status: 400
+      render json: { error: card.errors.messages }, status: 400
     end
   end
 end
