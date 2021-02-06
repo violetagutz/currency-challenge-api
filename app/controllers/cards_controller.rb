@@ -5,7 +5,7 @@ class CardsController < ApplicationController
     if card.save
       render json: { card_id: card.id, limit: card.limit, error: false }, status: 201
     else
-      render json: { error: card.errors.messages }, status: 400
+      render json: { error: card.errors.full_messages }, status: 400
     end
   end
 
@@ -17,7 +17,6 @@ class CardsController < ApplicationController
 
   def available_balance
     card = Card.find_by(id: params[:id])
-    balance = card.calculate_balance
-    render json: { id: card.id, available_balance: balance }
+    render json: { id: card.id, available_balance: card.available_balance }
   end
 end
