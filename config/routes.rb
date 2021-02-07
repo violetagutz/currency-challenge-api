@@ -3,5 +3,6 @@ Rails.application.routes.draw do
   post 'charge/create', to: 'transactions#create'
   get 'get_card', to: 'cards#get_card_if_exists'
   get 'card/available_balance', to: 'cards#available_balance'
+  delete 'delete', to: 'cards#delete_card'
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
 end
