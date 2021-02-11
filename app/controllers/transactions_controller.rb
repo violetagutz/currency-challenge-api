@@ -17,7 +17,10 @@ class TransactionsController < ApplicationController
       transaction = Transaction.new(amount: params[:amount],
                                    card_id: params[:card_id])
 
-      if transaction.save
+      if transaction.amount > card.average_transactions_amount
+        render json: { error: "Sorry transaction cannot be completed." },
+                       status: 400
+      elsif transaction.save
         render json: { id: transaction.id, total_usage: card.sum_of_charges,
                        error: false }, status: 201
       else
