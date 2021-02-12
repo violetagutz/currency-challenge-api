@@ -8,16 +8,42 @@ class Card < ApplicationRecord
                                     less_than: 100000000 }
   validates :number, uniqueness: true
 
-  before_validation :random_number, on: :create
+  before_validation :add_random_number, on: :create
 
-  def random_number
+=begin
+  def add_random_number
+    # check if there is a card in the database with the number we just
+    # generated. If exist (condition is true) generate other number
+
+    # this is what we will use to check existance
+    random_number
+
+    random_number = 16.times.map{rand(1..9)}.join.to_i
+
+    while Card.find_by(number: random_number)
+      # generate a new random number and reassigned to the random_number
+      # variable
+      random_number = 16.times.map{rand(1..9)}.join.to_i
+    end
+
+    # set the random number to the number of the current card
+    self.number = random_number
+
+  end
+=end
+
+  def add_random_number
     self.number = 16.times.map{rand(1..9)}.join.to_i
+    add_random_number if Card.find_by(number: number)
   end
 
+  # get the total of the sum of all the amounts in that specifica card
   def sum_of_charges
     Transaction.where(card_id: self.id).sum(:amount)
   end
 
+  # calculate the money left from the rest of limit minus sum of
+  # charges
   def available_balance
     self.limit - self.sum_of_charges
   end
