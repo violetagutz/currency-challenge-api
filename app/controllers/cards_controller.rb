@@ -1,10 +1,12 @@
 class CardsController < ApplicationController
 
   def create
+
     card = Card.new(limit: params[:limit])
+
     if card.save
       render json: { card_id: card.id, limit: card.limit, error: false },
-             status: 201
+                     status: 201
     else
       render json: { error: "Limit must be greater or equal to $100
                      and less than $1,000,000" }, status: 400

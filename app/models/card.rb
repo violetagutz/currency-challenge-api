@@ -2,10 +2,17 @@ class Card < ApplicationRecord
 
   has_many :transactions
 
-  validates :limit, presence: true
+  validates :limit, :number, presence: true
   validates :limit, numericality: { only_integer: true,
                                     greater_than_or_equal_to: 10000,
                                     less_than: 100000000 }
+  validates :number, uniqueness: true
+
+  before_validation :random_number, on: :create
+
+  def random_number
+    self.number = 16.times.map{rand(1..9)}.join.to_i
+  end
 
   def sum_of_charges
     Transaction.where(card_id: self.id).sum(:amount)
