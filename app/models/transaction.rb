@@ -8,6 +8,7 @@ class Transaction < ApplicationRecord
   enum state: { "pending": 0, "declined": 1 }
 
   def self.group_transactions_by_amount
+
     transactions_by_amount = {}
 
     self.where(state: "pending").each do |transaction|
@@ -33,9 +34,20 @@ class Transaction < ApplicationRecord
   end
 
   def self.check_duplicates
+    amount = 20
     transactions_by_amount = self.group_transactions_by_amount
-    binding.pry
-    return
+    array_of_trans = transactions_by_amount[amount]
+    if array_of_trans.length > 1
+      first_trans = array_of_trans.shift
+      updated_array = array_of_trans
+      updated_array.each do |transaction|
+        transaction.state = "declined"
+        transaction.save
+      end
+      return first_trans
+    end
+    # return
+    # first_transaction
   end
 
   def self.verify_pending_transactions
