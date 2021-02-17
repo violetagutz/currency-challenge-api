@@ -30,24 +30,33 @@ class Transaction < ApplicationRecord
         transactions_by_amount[amount] = transactions_array
       end
     end
+    # returns a Hash
     return transactions_by_amount
   end
 
   def self.check_duplicates
-    amount = 20
+
     transactions_by_amount = self.group_transactions_by_amount
-    array_of_trans = transactions_by_amount[amount]
-    if array_of_trans.length > 1
-      first_trans = array_of_trans.shift
-      updated_array = array_of_trans
-      updated_array.each do |transaction|
-        transaction.state = "declined"
-        transaction.save
+
+    transactions_by_amount.keys.each do |transactions_amount|
+
+      array_of_transactions = transactions_by_amount[transactions_amount]
+
+      array_pending_transactions = []
+
+      if array_of_transactions.length > 1
+        first_transaction = array_of_transactions.shift
+        array_pending_transactions.push(first_transaction)
+        updated_array = array_of_transactions
+        updated_array.each do |transaction|
+          transaction.state = "declined"
+          transaction.save
+        end
+      else
+        array_pending_transactions = transactions_by_amount
       end
-      return first_trans
+      return array_pending_transactions
     end
-    # return
-    # first_transaction
   end
 
   def self.verify_pending_transactions
@@ -55,4 +64,3 @@ class Transaction < ApplicationRecord
   end
 
 end
-
