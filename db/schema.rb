@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_12_211112) do
+ActiveRecord::Schema.define(version: 2021_02_18_174640) do
 
   create_table "cards", force: :cascade do |t|
     t.integer "limit"
@@ -26,6 +26,7 @@ ActiveRecord::Schema.define(version: 2021_02_12_211112) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "state", default: 0, null: false
+    t.string "country", default: "USA", null: false
     t.index ["card_id"], name: "index_transactions_on_card_id"
     t.index ["state"], name: "index_transactions_on_state"
   end

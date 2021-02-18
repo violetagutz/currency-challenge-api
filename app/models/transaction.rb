@@ -5,7 +5,7 @@ class Transaction < ApplicationRecord
   validates :amount, :card_id, presence: true
   validates :amount, numericality: { only_integer: true, greater_than: 0 }
 
-  enum state: { "pending": 0, "declined": 1 }
+  enum state: { "pending": 0, "declined": 1, "flag": 2 }
 
   scope :pending, -> { where(state: "pending") }
 
@@ -40,29 +40,40 @@ class Transaction < ApplicationRecord
 
     transactions_by_amount = self.group_transactions_by_amount
 
-    transactions_by_amount.keys.each do |transactions_amount|
+    transactions_by_amount.keys.map do |transactions_amount|
 
-      array_of_transactions = transactions_by_amount[transactions_amount]
+      transactions_per_amount = transactions_by_amount[transactions_amount]
 
-      array_pending_transactions = []
-
-      if array_of_transactions.length > 1
-        first_transaction = array_of_transactions.shift
-        array_pending_transactions.push(first_transaction)
-        updated_array = array_of_transactions
-        updated_array.each do |transaction|
+      if transactions_per_amount.length > 1
+        pending_transaction = transactions_per_amount.shift
+        transactions_per_amount.each do |transaction|
           transaction.state = "declined"
           transaction.save
         end
+        pending_transaction
       else
-        array_pending_transactions = transactions_by_amount
+        pending_transaction = transactions_per_amount.first
       end
-      return array_pending_transactions
     end
   end
 
   def self.verify_pending_transactions
     self.check_duplicates
   end
+
+  def self.verify_country
+    self.pending.each do |transaction|
+      if transaction.country != "USA"
+        transaction.state = "flag"
+        transaction.save
+      end
+      return transaction
+    end
+  end
+
+
+
+
+
 
 end
