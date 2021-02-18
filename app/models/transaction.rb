@@ -7,11 +7,13 @@ class Transaction < ApplicationRecord
 
   enum state: { "pending": 0, "declined": 1 }
 
+  scope :pending, -> { where(state: "pending") }
+
   def self.group_transactions_by_amount
 
     transactions_by_amount = {}
 
-    self.where(state: "pending").each do |transaction|
+    self.pending.each do |transaction|
       # getting the amount out of transaction
       amount = transaction[:amount]
       # set an array as a value of the hash with the key of amount
