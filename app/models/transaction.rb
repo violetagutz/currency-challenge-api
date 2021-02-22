@@ -40,6 +40,9 @@ class Transaction < ApplicationRecord
 
     transactions_by_amount = self.group_transactions_by_amount
 
+    # map dont uses return, just return the last thing
+    # check if what i am returning is the same type: hash, record, arr
+    # .keys returns an array of keys of that hash
     transactions_by_amount.keys.map do |transactions_amount|
 
       transactions_per_amount = transactions_by_amount[transactions_amount]
@@ -57,23 +60,18 @@ class Transaction < ApplicationRecord
     end
   end
 
-  def self.verify_pending_transactions
-    self.check_duplicates
-  end
-
   def self.verify_country
-    self.pending.each do |transaction|
+    pending_transactions = self.check_duplicates
+    pending_transactions.map do |transaction|
       if transaction.country != "USA"
         transaction.state = "flag"
         transaction.save
       end
-      return transaction
+      transaction
     end
   end
 
-
-
-
-
-
+  def self.verify_pending_transactions
+    self.verify_country
+  end
 end

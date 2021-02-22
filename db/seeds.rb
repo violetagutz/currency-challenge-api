@@ -13,6 +13,13 @@ card = {
 card_one = Card.new(card)
 card_one.save!
 
+card = {
+  limit: 100000,
+}
+
+card_two = Card.new(card)
+card_two.save!
+
 transaction = {
   amount: 200,
   card_id: 1,
@@ -24,7 +31,7 @@ transaction_one.save!
 
 transaction = {
   amount: 300,
-  card_id: 1,
+  card_id: 2,
   country: "Panama"
 }
 

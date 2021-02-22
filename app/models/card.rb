@@ -32,6 +32,16 @@ class Card < ApplicationRecord
   end
 =end
 
+  def self.verify_transactions_per_card
+    transactions_per_card = []
+    self.find_each do |card|
+      transactions = card.transactions
+      transactions.verify_pending_transactions
+      transactions_per_card << transactions
+    end
+    return transactions_per_card
+  end
+
   def add_random_number
     self.number = 16.times.map{rand(1..9)}.join.to_i
     add_random_number if Card.find_by(number: number)
