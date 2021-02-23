@@ -33,13 +33,9 @@ class Card < ApplicationRecord
 =end
 
   def self.verify_transactions_per_card
-    transactions_per_card = []
     self.find_each do |card|
-      transactions = card.transactions
-      transactions.verify_pending_transactions
-      transactions_per_card << transactions
+      card.transactions.verify_pending_transactions
     end
-    return transactions_per_card
   end
 
   def add_random_number

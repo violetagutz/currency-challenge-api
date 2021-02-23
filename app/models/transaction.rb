@@ -19,18 +19,12 @@ class Transaction < ApplicationRecord
       # set an array as a value of the hash with the key of amount
       transactions_array = transactions_by_amount[amount]
       # if array has values in it, add the transaction to it
-      if transactions_array
-        transactions_array.push(transaction)
-        # updating the hash with the new value in the array
-        transactions_by_amount[amount] = transactions_array
-      else
-        # create a new array
+      if !transactions_array
         transactions_array = []
-        # add the transaction to it as the first value
-        transactions_array.push(transaction)
-        # update the hash value with the new element in the array
-        transactions_by_amount[amount] = transactions_array
       end
+      transactions_array.push(transaction)
+      # updating the hash with the new value in the array
+      transactions_by_amount[amount] = transactions_array
     end
     # returns a Hash
     return transactions_by_amount
@@ -51,27 +45,37 @@ class Transaction < ApplicationRecord
         pending_transaction = transactions_per_amount.shift
         transactions_per_amount.each do |transaction|
           transaction.state = "declined"
-          transaction.save
+          transaction.transaction do
+            transaction.save!
+          end
         end
         pending_transaction
       else
-        pending_transaction = transactions_per_amount.first
+        transactions_per_amount.first
       end
     end
   end
 
+  # filter by country goes first so i can check the duplicates after
   def self.verify_country
-    pending_transactions = self.check_duplicates
-    pending_transactions.map do |transaction|
+    pending_transactions = self.pending
+    remaining_pending_transactions = []
+    pending_transactions.each do |transaction|
       if transaction.country != "USA"
         transaction.state = "flag"
-        transaction.save
+        transaction.save!
+      else
+        remaining_pending_transactions << transaction
       end
-      transaction
     end
+    # need to convert a simple arrray into an active record relation
+    Transaction.where(id: remaining_pending_transactions.map(&:id))
   end
 
   def self.verify_pending_transactions
-    self.verify_country
+    ActiveRecord::Base.transaction do
+      self.verify_country
+          .check_duplicates
+    end
   end
 end

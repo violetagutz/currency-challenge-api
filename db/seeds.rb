@@ -55,3 +55,13 @@ transaction = {
 
 transaction_four = Transaction.new(transaction)
 transaction_four.save!
+
+
+transaction = {
+  amount: 200,
+  card_id: 1,
+  country: "USA"
+}
+
+transaction_five = Transaction.new(transaction)
+transaction_five.save!

@@ -16,7 +16,6 @@ class TransactionsController < ApplicationController
     else
       transaction = Transaction.new(amount: params[:amount],
                                    card_id: params[:card_id])
-      transaction.state = "pending"
 
       if transaction.amount > card.average_transactions_amount &&
           card.average_transactions_amount > 0
