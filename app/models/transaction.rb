@@ -64,6 +64,7 @@ class Transaction < ApplicationRecord
       if transaction.country != "USA"
         transaction.state = "flag"
         transaction.save!
+        TransactionMailer.confirm_flag_transaction.deliver_now
       else
         remaining_pending_transactions << transaction
       end

@@ -25,8 +25,8 @@ ActiveRecord::Schema.define(version: 2021_02_18_174640) do
     t.integer "card_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.integer "state", default: 0, null: false
     t.string "country", default: "USA", null: false
+    t.integer "state", default: 0, null: false
     t.index ["card_id"], name: "index_transactions_on_card_id"
     t.index ["state"], name: "index_transactions_on_state"
   end

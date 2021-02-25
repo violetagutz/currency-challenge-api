@@ -32,7 +32,7 @@ transaction_one.save!
 transaction = {
   amount: 300,
   card_id: 2,
-  country: "Panama"
+  country: "USA"
 }
 
 transaction_two = Transaction.new(transaction)
@@ -41,7 +41,7 @@ transaction_two.save!
 transaction = {
   amount: 300,
   card_id: 1,
-  country: "China"
+  country: "USA"
 }
 
 transaction_three = Transaction.new(transaction)
