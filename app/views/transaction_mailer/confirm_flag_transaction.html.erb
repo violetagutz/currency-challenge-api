@@ -2,6 +2,8 @@
   <%= @greeting %>,
 </h4>
 <br>
-Seems like you made a purchase outside of US, was it you?
-Please click here to confirm: </p>
+<p>Seems like you made a purchase outside of US for $ <%= @amount %>.00, was it you?
+If you made this purchase, Please click the link below to confirm: </p>
 <br>
+<%= link_to "confirm", confirm_transaction_url(id: @id) %>
+

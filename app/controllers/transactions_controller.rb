@@ -30,4 +30,11 @@ class TransactionsController < ApplicationController
       end
     end
   end
+
+  def confirm_transaction
+    #confirm flag transaction
+    transaction = Transaction.find_by(id: params[:id])
+    transaction.state = "accepted"
+    transaction.save!
+  end
 end

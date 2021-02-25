@@ -5,7 +5,7 @@ class Transaction < ApplicationRecord
   validates :amount, :card_id, presence: true
   validates :amount, numericality: { only_integer: true, greater_than: 0 }
 
-  enum state: { "pending": 0, "declined": 1, "flag": 2 }
+  enum state: { "pending": 0, "declined": 1, "flag": 2, "accepted": 3 }
 
   scope :pending, -> { where(state: "pending") }
 
@@ -64,7 +64,8 @@ class Transaction < ApplicationRecord
       if transaction.country != "USA"
         transaction.state = "flag"
         transaction.save!
-        TransactionMailer.confirm_flag_transaction.deliver_now
+        TransactionMailer.with(id: transaction.id, amount: transaction.amount)
+                         .confirm_flag_transaction.deliver_now
       else
         remaining_pending_transactions << transaction
       end
