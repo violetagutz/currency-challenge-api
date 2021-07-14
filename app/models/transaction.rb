@@ -64,7 +64,9 @@ class Transaction < ApplicationRecord
       if transaction.country != "USA"
         transaction.state = "flag"
         transaction.save!
-        TransactionMailer.with(id: transaction.id, amount: transaction.amount)
+        transaction.set_confirmation_token
+        TransactionMailer.with(confirmation_token: transaction.confirmation_token,
+                               amount: transaction.amount)
                          .confirm_flag_transaction.deliver_now
       else
         remaining_pending_transactions << transaction
@@ -78,6 +80,16 @@ class Transaction < ApplicationRecord
     ActiveRecord::Base.transaction do
       self.verify_country
           .check_duplicates
+    end
+  end
+
+  def set_confirmation_token
+    if self.confirmation_token.blank?
+      self.confirmation_token = SecureRandom.urlsafe_base64.to_s
+      set_confirmation_token if Transaction.find_by(confirmation_token:
+                                                   confirmation_token)
+      date = Date.today
+      self.expired_at = date.end_of_day
     end
   end
 end

@@ -7,9 +7,9 @@ class TransactionMailer < ApplicationMailer
   #
   def confirm_flag_transaction
     @greeting = "Hi"
-    @id = params[:id]
+    @confirmation_token = params[:confirmation_token]
     @amount = params[:amount]
 
-    mail to: "myviatech@gmail.com", subject: "Confirm purchase outside of US"
+    mail to: ENV['MAIL_TO'], subject: "Confirm purchase outside of US"
   end
 end

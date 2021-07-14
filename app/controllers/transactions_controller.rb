@@ -33,8 +33,11 @@ class TransactionsController < ApplicationController
 
   def confirm_transaction
     #confirm flag transaction
-    transaction = Transaction.find_by(id: params[:id])
+    transaction = Transaction.find_by(id: params[:id],
+                                      confirmation_token: params[:confirmation_token])
     transaction.state = "accepted"
     transaction.save!
+    transaction.confirmed_at = Time.zone.now.to_datetime
+    binding.pry
   end
 end
