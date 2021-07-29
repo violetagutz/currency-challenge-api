@@ -22,11 +22,19 @@ class TransactionsController < ApplicationController
         render json: { error: "Sorry transaction cannot be completed." },
                        status: 400
       elsif transaction.save
+
         render json: { id: transaction.id, total_usage: card.sum_of_charges,
                        error: false }, status: 201
       else
         render json: { error: transaction.errors.full_messages }, status: 400
       end
     end
+  end
+
+  def confirm_transaction
+    #confirm flag transaction
+    transaction = Transaction.find_by(id: params[:id])
+    transaction.state = "accepted"
+    transaction.save!
   end
 end
